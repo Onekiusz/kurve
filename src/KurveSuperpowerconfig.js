@@ -41,6 +41,9 @@ Kurve.Superpowerconfig.types = {
     NO_SUPERPOWER: 'NO_SUPERPOWER',
     SHOOT_HOLES: 'SHOOT_HOLES',
     RANDOM: 'RANDOM',
+    GRUBY: 'GRUBY',
+    SEREK: 'SEREK',
+    ALKOHOLIK: 'ALKOHOLIK',
 };
 
 Kurve.Superpowerconfig.hooks = {
@@ -94,6 +97,137 @@ Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.RUN_FASTER] = {
     close: function(curve) {
         this.setIsActive(false);
     }
+};
+
+Kurve.Superpowerconfig.types.GRUBY = 'GRUBY';
+
+Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.GRUBY] = {
+    label: 'gruby',
+    hooks: [Kurve.Superpowerconfig.hooks.DRAW_NEXT_FRAME],
+    audios: [],
+
+    helpers: {
+        initialWidth: null,
+        executionTime: 0,
+        initAct: function(curve) {
+            this.decrementCount();
+            this.setIsActive(true);
+            this.helpers.executionTime = 5 * Kurve.Game.fps; // np. 5 sekund
+            this.helpers.initialWidth = curve.getOptions().lineWidth || 2;
+            
+            // Pogrubienie linii
+            curve.getOptions().lineWidth = this.helpers.initialWidth * 3;
+        },
+        closeAct: function(curve) {
+            this.setIsActive(false);
+            if (this.helpers.initialWidth !== null) {
+                curve.getOptions().lineWidth = this.helpers.initialWidth;
+            }
+        }
+    },
+
+    init: function(curve) {},
+
+    act: function(hook, curve) {
+        if (!this.isActive()) this.helpers.initAct.call(this, curve);
+        if (this.helpers.executionTime < 1) this.helpers.closeAct.call(this, curve);
+
+        this.helpers.executionTime--;
+    },
+
+    close: function(curve) {
+        this.helpers.closeAct.call(this, curve);
+    }
+};
+
+Kurve.Superpowerconfig.types.SEREK = 'SEREK';
+
+Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.SEREK] = {
+    label: 'serek',
+    hooks: [Kurve.Superpowerconfig.hooks.DRAW_NEXT_FRAME],
+    audios: [],
+    helpers: {
+        holeSize: 15
+    },
+
+    init: function(curve) {},
+
+    act: function(hook, curve) {
+        if (!this.isActive()) {
+            var game = curve.getGame();
+            
+            // Przechodzimy po liniach wszystkich graczy i tworzymy dziury
+            for (var playerId in game.runningCurves) {
+                var playerCurves = game.runningCurves[playerId];
+                for (var i = 0; i < playerCurves.length; i++) {
+                    var c = playerCurves[i];
+                    var x = c.getPositionX();
+                    var y = c.getPositionY();
+                    var angle = c.getOptions().angle;
+
+                    // Wycięcie odcinka linii przed głową każdej z linii
+                    var endX = x + Math.cos(angle) * this.helpers.holeSize;
+                    var endY = y + Math.sin(angle) * this.helpers.holeSize;
+                    Kurve.Field.clearLine(x, y, endX, endY);
+                }
+            }
+
+            this.decrementCount();
+            this.setIsActive(true);
+        }
+
+        // Reset gotowości po puszczeniu klawisza
+        if (!curve.getGame().isKeyDown(curve.getPlayer().getKeySuperpower())) {
+            this.setIsActive(false);
+        }
+    },
+
+    close: function(curve) {}
+};
+
+Kurve.Superpowerconfig.types.SEREK = 'SEREK';
+
+Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.SEREK] = {
+    label: 'serek',
+    hooks: [Kurve.Superpowerconfig.hooks.DRAW_NEXT_FRAME],
+    audios: [],
+    helpers: {
+        holeSize: 15
+    },
+
+    init: function(curve) {},
+
+    act: function(hook, curve) {
+        if (!this.isActive()) {
+            var game = curve.getGame();
+            
+            // Przechodzimy po liniach wszystkich graczy i tworzymy dziury
+            for (var playerId in game.runningCurves) {
+                var playerCurves = game.runningCurves[playerId];
+                for (var i = 0; i < playerCurves.length; i++) {
+                    var c = playerCurves[i];
+                    var x = c.getPositionX();
+                    var y = c.getPositionY();
+                    var angle = c.getOptions().angle;
+
+                    // Wycięcie odcinka linii przed głową każdej z linii
+                    var endX = x + Math.cos(angle) * this.helpers.holeSize;
+                    var endY = y + Math.sin(angle) * this.helpers.holeSize;
+                    Kurve.Field.clearLine(x, y, endX, endY);
+                }
+            }
+
+            this.decrementCount();
+            this.setIsActive(true);
+        }
+
+        // Reset gotowości po puszczeniu klawisza
+        if (!curve.getGame().isKeyDown(curve.getPlayer().getKeySuperpower())) {
+            this.setIsActive(false);
+        }
+    },
+
+    close: function(curve) {}
 };
 
 Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.RUN_SLOWER] = {
@@ -675,7 +809,46 @@ Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.NO_SUPERPOWER] = {
     },
     close: function(curve) {}
 };
+Kurve.Superpowerconfig.types.GRUBY = 'GRUBY';
 
+Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.GRUBY] = {
+    label: 'gruby',
+    hooks: [Kurve.Superpowerconfig.hooks.DRAW_NEXT_FRAME],
+    audios: [],
+
+    helpers: {
+        initialWidth: null,
+        executionTime: 0,
+        initAct: function(curve) {
+            this.decrementCount();
+            this.setIsActive(true);
+            this.helpers.executionTime = 5 * Kurve.Game.fps; // np. 5 sekund
+            this.helpers.initialWidth = curve.getOptions().lineWidth || 2;
+            
+            // Pogrubienie linii
+            curve.getOptions().lineWidth = this.helpers.initialWidth * 3;
+        },
+        closeAct: function(curve) {
+            this.setIsActive(false);
+            if (this.helpers.initialWidth !== null) {
+                curve.getOptions().lineWidth = this.helpers.initialWidth;
+            }
+        }
+    },
+
+    init: function(curve) {},
+
+    act: function(hook, curve) {
+        if (!this.isActive()) this.helpers.initAct.call(this, curve);
+        if (this.helpers.executionTime < 1) this.helpers.closeAct.call(this, curve);
+
+        this.helpers.executionTime--;
+    },
+
+    close: function(curve) {
+        this.helpers.closeAct.call(this, curve);
+    }
+};
 Kurve.Superpowerconfig[Kurve.Superpowerconfig.types.SHOOT_HOLES] = {
     label: 'shoot holes',
     hooks: [Kurve.Superpowerconfig.hooks.DRAW_NEXT_FRAME],
